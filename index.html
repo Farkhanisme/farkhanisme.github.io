@@ -103,6 +103,21 @@
           ),
           linear-gradient(334deg, hsl(247, 0%, 2%), hsl(247, 0%, 2%));
       }
+
+      .jumbotron img {
+        width: 200px;
+        height: 200px;
+      }
+
+      @media (max-width: 768px) {
+        .jumbotron img {
+          width: 150px;
+          height: 150px;
+        }
+        .jumbotron {
+          padding-top: 65px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -113,6 +128,7 @@
     </nav>
 
     <section class="jumbotron text-center" id="introduction">
+      <img src="img.png" class="rounded-circle" />
       <h1 class="display-4">Hello</h1>
       <h1 class="display-4">My Name Is Khan</h1>
       <p class="lead">And I am A Web Developer</p>
