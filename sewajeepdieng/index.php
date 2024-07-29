@@ -72,7 +72,7 @@
         
         <div id="main-content">
             <div class="container">
-                <div class="row row-cols-1 row-cols-sm-2 g-3 my-3 py-5">
+                <div class="row row-cols-1 row-cols-lg-2 g-3 my-3 py-5">
                     <div class="col mb-5">
                         <div id="banner" class="bg-dark text-white position-relative d-flex align-items-center justify-content-center">
                             <div id="bg-border-1" class="position-absolute top-0 start-0 bottom-0 end-0"></div>
