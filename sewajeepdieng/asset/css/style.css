@@ -1,0 +1,78 @@
+::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    /* background-image: url(background.jpg); */
+    background-color: #101720;
+}
+
+#main-content {
+    background: #171717;
+}
+
+#banner-background {
+    filter: blur(5px);
+}
+
+#info-kami {
+    height: 250px;
+    width: auto;
+}
+
+#bg-info-kami-1 {
+    clip-path: polygon(0 30%, 0% 100%, 100% 100%);
+    background: orangered;
+}
+
+#bg-info-kami-2 {
+    clip-path: polygon(0 15%, 0% 100%, 100% 100%);
+    background: red;
+}
+
+#info-zona {
+    height: 200px;
+}  
+
+#bg-info-zona-1 {
+    border-radius: 0% 100% 100% 0% / 100% 100% 0% 0%;
+    width: 200px;
+    height: 200px;
+}
+
+#bg-info-zona-2 {
+    border-radius: 0% 100% 0% 100% / 0% 0% 100% 100%  ;
+    width: 150px;
+    height: 150px;
+    background-image: url('asset/img/bg-info-zona-1.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.card-image-wrapper {
+    position: relative;
+    height: 200px; /* Sesuaikan dengan kebutuhan */
+    overflow: hidden;
+}
+
+.card-image-wrapper #img-1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    clip-path: polygon(0 0, 0% 100%, 100% 100%);
+}
+
+.card-image-wrapper #img-2 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    clip-path: polygon(0 0, 100% 100%, 100% 0);
+}
