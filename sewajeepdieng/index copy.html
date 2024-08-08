@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pemesanan</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css">
+    <style>
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .custom-table th,
+        .custom-table td {
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+            /* Warna border bawah */
+            padding: 8px;
+            text-align: left;
+        }
+
+        .custom-table th {
+            font-weight: bold;
+        }
+
+        .custom-table tr:last-child td {
+            border-bottom: none;
+            /* Hapus border bawah dari baris terakhir */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container my-3">
+        <div class="row row-cols-1 row-cols-lg-2 m-3 g-2">
+            <div class="col">
+                <div class="card p-3 rounded-0">
+                    <form action="" id="form-pesan">
+                        <div class="row row-cols-1 row-cols-sm-2 p-3">
+                            <div class="col">
+                                <label for="nama" class="form-label">Nama Pemesan</label>
+                                <input type="text" class="form-control" name="nama" id="nama">
+                            </div>
+
+                            <div class="col">
+                                <label for="tgl" class="form-label">Tanggal</label>
+                                <input type="date" name="tgl" id="tgl" class="form-control">
+                            </div>
+
+                            <div class="col">
+                                <label for="paket" class="form-label">Pilih Zona Wisata</label>
+                                <select name="paket" id="paket" class="form-select" aria-label="Default select example">
+                                    <option selected disabled>Pilih Zona</option>
+                                    <option value="z-1">Zona Healing</option>
+                                    <option value="z-3">Zona Happy</option>
+                                    <option value="snr">Sunrise</option>
+                                    <option value="z-snr-1">Sunrise & Zona Healing</option>
+                                    <option value="z-snr-3">Sunrise & Zona Happy</option>
+                                </select>
+                            </div>
+
+                            <div class="col d-none" id="kontainer-destinasi-sunrise">
+                                <label for="destinasi-sunrise" class="form-label">Pilih Destinasi Sunrise</label>
+                                <select name="destinasi-sunrise" id="destinasi-sunrise" class="form-select">
+                                    <option selected disabled>Pilih Destinasi Sunrise</option>
+                                    <option value="pnlg">Pintu Langit</option>
+                                    <option value="btak">Batu / Watu Angkruk</option>
+                                    <option value="btkp">Bukit Sikapuk</option>
+                                    <option value="sknr">Sikunir</option>
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <label for="jml" class="form-label">Jumlah Penumpang / Rombongan</label>
+                                <input type="number" min="1" name="jml" id="jml" class="form-control">
+                            </div>
+
+                            <div class="col">
+                                <label for="jmp" class="form-label">Titik Penjemputan</label>
+                                <select name="jmp" id="jmp" class="form-select" aria-label="Default select example">
+                                    <option selected disabled>Pilih Titik Penjemputan</option>
+                                    <option value="terminal">Terminal Mendolo / Wonosobo Kota</option>
+                                    <option value="kalianget">Taman Rekreasi Pemandian Kalianget</option>
+                                    <option value="unsiq">Kampus 2 UNSIQ</option>
+                                    <option value="horison">Hotel Horison</option>
+                                    <option value="tambi">Tambi</option>
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <label for="jeep" class="form-label">Informasi jumlah Jeep</label>
+                                <input readonly name="jeep" id="jeep" class="form-control">
+                            </div>
+
+                            <div class="col">
+                                <label for="pilih-jumlah-jeep" class="form-label">Jumlah Jeep</label>
+                                <select name="pilih-jumlah-jeep" id="pilih-jumlah-jeep" class="form-select">
+                                    <option value="">Pilih Jumlah Jeep</option>
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <label for="hrg" class="form-label">Total Harga</label>
+                                <input readonly name="hrg" id="hrg" class="form-control">
+                            </div>
+
+                            <div class="col">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="includeTickets"
+                                        name="includeTickets">
+                                    <label class="form-check-label" for="includeTickets">
+                                        Include Tiket Destinasi
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <label for="psn" class="form-label">Pesan Untuk Driver</label>
+                                <textarea name="psn" id="psn" class="form-control">Pesan Tambahan Disini</textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center mt-2">
+                            <button type="button" class="btn btn-success" id="pesan">Pesan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card rounded-0">
+                    <div class="card-body">
+                        <h2 class="card-title text-center fw-medium border-bottom border-2">
+                            Detail Pemesanan
+                        </h2>
+                        <div id="detail-pesanan" class="text-capitalize p-0"></div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                // Daftar harga per zona
+                const hargaZona = {
+                    'z-1': 600000,  // Zona Healing
+                    'z-3': 900000,  // Zona Happy
+                    'snr': 0,  // Sunrise (harga tergantung destinasi)
+                    'z-snr-1': 600000,  // Sunrise & Zona Healing (harga zona + harga sunrise)
+                    'z-snr-3': 900000   // Sunrise & Zona Happy (harga zona + harga sunrise)
+                };
+            
+                // Daftar harga sunrise
+                const hargaDestinasiSunrise = {
+                    'pnlg': 350000,
+                    'btak': 350000,
+                    'btkp': 350000,
+                    'sknr': 400000
+                };
+            
+                // Daftar biaya tambahan per titik penjemputan
+                const biayaPenjemputan = {
+                    'terminal': 200000,   // Terminal Mendolo / Wonosobo Kota
+                    'kalianget': 150000,  // Taman Rekreasi Pemandian Kalianget
+                    'unsiq': 150000,      // Kampus 2 UNSIQ
+                    'horison': 100000,    // Hotel Horison
+                    'tambi': 100000       // Tambi
+                };
+            
+                // New price list for destination tickets
+                const hargaTiketDestinasi = {
+                    'z-1': {
+                        'Candi Arjuna': 10000,
+                        'Kawah Sikidang': 15000,
+                        'Bukit Sikunir': 20000
+                    },
+                    'z-3': {
+                        'Candi Arjuna': 10000,
+                        'Kawah Sikidang': 15000,
+                        'Bukit Sikunir': 20000,
+                        'Telaga Warna': 25000,
+                        'Dieng Plateau Theater': 30000
+                    },
+                    'snr': {
+                        'pnlg': 30000,  // Pintu Langit
+                        'btak': 25000,  // Batu / Watu Angkruk
+                        'btkp': 25000,  // Bukit Sikapuk
+                        'sknr': 35000   // Sikunir
+                    }
+                };
+            
+                // Ambil elemen-elemen yang diperlukan dari DOM
+                const formulir = document.getElementById('form-pesan');
+                const pilihPaket = document.getElementById('paket');
+                const inputJumlah = document.getElementById('jml');
+                const inputHarga = document.getElementById('hrg');
+                const pilihPenjemputan = document.getElementById('jmp');
+                const pilihJumlahJeep = document.getElementById('pilih-jumlah-jeep');
+                const infoJeep = document.getElementById('jeep');
+                const kontainerDestinasiSunrise = document.getElementById('kontainer-destinasi-sunrise');
+                const pilihDestinasiSunrise = document.getElementById('destinasi-sunrise');
+            
+                // Fungsi untuk membulatkan harga ke atas ke kelipatan 5000 terdekat
+                function bulatkanHarga(harga) {
+                    return Math.ceil(harga / 5000) * 5000;
+                }
+            
+                function perbaruiJumlahJeep() {
+                    const jumlahPenumpang = parseInt(inputJumlah.value) || 0;
+                    const maksJeep = Math.max(1, Math.ceil(jumlahPenumpang / 4));
+            
+                    const nilaiTerpilih = pilihJumlahJeep.value;
+            
+                    pilihJumlahJeep.innerHTML = '<option value="">Pilih Jumlah Jeep</option>';
+            
+                    for (let i = 1; i <= maksJeep; i++) {
+                        const opsi = document.createElement('option');
+                        opsi.value = i;
+                        opsi.textContent = `${i} Jeep`;
+                        pilihJumlahJeep.appendChild(opsi);
+                    }
+            
+                    if (nilaiTerpilih && nilaiTerpilih <= maksJeep) {
+                        pilihJumlahJeep.value = nilaiTerpilih;
+                    }
+                }
+            
+                function perbaruiVisibilitasDestinasiSunrise() {
+                    const zonaTerpilih = pilihPaket.value;
+                    if (zonaTerpilih === 'snr' || zonaTerpilih === 'z-snr-1' || zonaTerpilih === 'z-snr-3') {
+                        kontainerDestinasiSunrise.classList.remove('d-none');
+                        kontainerDestinasiSunrise.classList.add('d-block');
+                    } else {
+                        kontainerDestinasiSunrise.classList.remove('d-block');
+                        kontainerDestinasiSunrise.classList.add('d-none');
+                        pilihDestinasiSunrise.selectedIndex = 0; // Reset pilihan
+                    }
+                    perbaruiHarga(); // Panggil perbaruiHarga setiap kali visibilitas berubah
+                }
+            
+                // Modify the perbaruiHarga function
+                function perbaruiHarga() {
+                    perbaruiJumlahJeep();
+                    const zonaTerpilih = pilihPaket.value;
+                    const jumlahPenumpang = parseInt(inputJumlah.value) || 1;
+                    const titikPenjemputan = pilihPenjemputan.value;
+                    const jumlahJeep = parseInt(pilihJumlahJeep.value) || 1;
+                    const destinasiSunrise = pilihDestinasiSunrise.value;
+                    const includeTickets = document.getElementById('includeTickets').checked;
+            
+                    if (zonaTerpilih in hargaZona) {
+                        let hargaPerJeep = hargaZona[zonaTerpilih];
+                        let totalTicketPrice = 0;
+            
+                        // Calculate sunrise price
+                        let hargaSunrise = 0;
+                        if ((zonaTerpilih === 'snr' || zonaTerpilih === 'z-snr-1' || zonaTerpilih === 'z-snr-3') && destinasiSunrise) {
+                            hargaSunrise = hargaDestinasiSunrise[destinasiSunrise] || 0;
+                            if (includeTickets) {
+                                totalTicketPrice += hargaSunrise * jumlahPenumpang;
+                            }
+                        }
+            
+                        // Add sunrise price if relevant
+                        if (zonaTerpilih === 'snr') {
+                            hargaPerJeep = hargaSunrise;
+                        } else if (zonaTerpilih === 'z-snr-1' || zonaTerpilih === 'z-snr-3') {
+                            hargaPerJeep += hargaSunrise;
+                        }
+            
+                        // Add ticket prices for other destinations in the zone
+                        if (includeTickets) {
+                            if (zonaTerpilih === 'z-1' || zonaTerpilih === 'z-snr-1') {
+                                totalTicketPrice += Object.values(hargaTiketDestinasi['z-1']).reduce((a, b) => a + b, 0) * jumlahPenumpang;
+                            } else if (zonaTerpilih === 'z-3' || zonaTerpilih === 'z-snr-3') {
+                                totalTicketPrice += Object.values(hargaTiketDestinasi['z-3']).reduce((a, b) => a + b, 0) * jumlahPenumpang;
+                            }
+                        }
+            
+                        // Add additional pickup costs
+                        if (titikPenjemputan in biayaPenjemputan) {
+                            hargaPerJeep += biayaPenjemputan[titikPenjemputan];
+                        }
+            
+                        if (hargaPerJeep !== undefined && jumlahJeep > 0) {
+                            let totalHarga = (hargaPerJeep * jumlahJeep) + totalTicketPrice;
+            
+                            if (jumlahPenumpang < 2) {
+                                inputHarga.value = `Rp ${totalHarga.toLocaleString('id-ID')}`;
+                            } else {
+                                let hargaPerOrang = Math.ceil(totalHarga / jumlahPenumpang);
+                                hargaPerOrang = bulatkanHarga(hargaPerOrang);
+                                inputHarga.value = `Per orang: Rp ${hargaPerOrang.toLocaleString('id-ID')}`;
+                            }
+            
+                            infoJeep.value = `${jumlahJeep}`;
+                        } else {
+                            inputHarga.value = 'Harga tidak tersedia';
+                            infoJeep.value = '';
+                        }
+                    } else {
+                        inputHarga.value = '';
+                        infoJeep.value = '';
+                    }
+                    perbaruiDetailPesanan();
+                }
+            
+                function formatTanggal(tanggal) {
+                    if (!tanggal) return '-';
+            
+                    const date = new Date(tanggal);
+            
+                    const namaHari = [
+                        'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
+                    ];
+            
+                    const namaBulan = [
+                        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                    ];
+            
+                    const dayOfWeek = namaHari[date.getDay()];
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = namaBulan[date.getMonth()];
+                    const year = date.getFullYear();
+            
+                    return `${dayOfWeek}, ${day} ${month} ${year}`;
+                }
+            
+                function perbaruiDetailPesanan() {
+                    const nama = document.getElementById('nama').value;
+                    const paket = pilihPaket.options[pilihPaket.selectedIndex]?.text || '-';
+                    const jumlahPenumpang = inputJumlah.value;
+                    const titikPenjemputan = pilihPenjemputan.options[pilihPenjemputan.selectedIndex]?.text || '-';
+                    const tanggal = formatTanggal(document.getElementById('tgl').value);
+                    const harga = inputHarga.value;
+                    const jumlahJeep = infoJeep.value;
+                    const destinasiSunrise = pilihDestinasiSunrise.options[pilihDestinasiSunrise.selectedIndex]?.text || '-';
+            
+                    const paketSunrise = ['snr', 'z-snr-1', 'z-snr-3'].includes(pilihPaket.value);
+            
+                    let detailHTML = `
+                        <table class="table">
+                            <tbody>
+                                <tr class="align-text-center">
+                                    <th scope="row">Nama Pemesan</th>
+                                    <td class="align-text-center">${nama || '-'}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Tanggal</th>
+                                    <td>${tanggal}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Zona Wisata</th>
+                                    <td>${paket}</td>
+                                </tr>
+                                ${paketSunrise ? `
+                                <tr>
+                                    <th scope="row">Destinasi Sunrise</th>
+                                    <td>${destinasiSunrise}</td>
+                                </tr>
+                                ` : ''}
+                                <tr>
+                                    <th scope="row">Jumlah Penumpang</th>
+                                    <td>${jumlahPenumpang || '-'}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Titik Penjemputan</th>
+                                    <td>${titikPenjemputan}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Jumlah Jeep</th>
+                                    <td>${jumlahJeep || '-'}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Total Harga</th>
+                                    <td>${harga || '-'}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+            
+                    document.getElementById('detail-pesanan').innerHTML = detailHTML;
+                }
+            
+                // Event listeners
+                formulir.addEventListener('change', perbaruiHarga);
+                pilihPaket.addEventListener('change', perbaruiVisibilitasDestinasiSunrise);
+                pilihDestinasiSunrise.addEventListener('change', perbaruiHarga);
+                document.getElementById('includeTickets').addEventListener('change', perbaruiHarga);
+            
+                // Inisialisasi
+                document.addEventListener('DOMContentLoaded', () => {
+                    perbaruiVisibilitasDestinasiSunrise();
+                    perbaruiHarga();
+                });
+            </script>
+            
+        </div>
+
+    </div>
+
+</body>
+
+</html>
